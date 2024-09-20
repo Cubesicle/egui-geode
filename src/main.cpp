@@ -1,6 +1,7 @@
 /**
  * Include the Geode headers.
  */
+#include "Geode/loader/ModEvent.hpp"
 #include <Geode/Geode.hpp>
 
 /**
@@ -95,6 +96,19 @@ class $modify(MyMenuLayer, MenuLayer) {
 	 * return type `void` and taking a `CCObject*`.
 	*/
 	void onMyButton(CCObject*) {
-		FLAlertLayer::create("Geode", "Hello from my custom mod!", "OK")->show();
+		FLAlertLayer::create("Geode", "Hello from my custom fuckoff mod!", "OK")->show();
 	}
+};
+
+#include "Geode/modify/PlayLayer.hpp"
+class $modify(PlayLayer) {
+	void startGame() {
+		log::info("fuck you lmao");
+		PlayLayer::startGame();
+	}
+};
+
+#include "Rusty.h"
+$on_mod(Loaded) {
+	peepeepoopoo();
 };
