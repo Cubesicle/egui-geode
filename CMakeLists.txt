@@ -7,12 +7,6 @@ set(GEODE_TARGET_PLATFORM "Win64")
 
 project(test VERSION 1.0.0)
 
-# Set up the mod binary
-add_library(${PROJECT_NAME} SHARED
-    src/main.cpp
-    # Add any extra C++ source files here
-)
-
 include(FetchContent)
 
 FetchContent_Declare(
@@ -23,10 +17,20 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(Corrosion)
 
 # Import targets defined in a package or workspace manifest `Cargo.toml` file
-corrosion_import_crate(MANIFEST_PATH ${CMAKE_SOURCE_DIR}/Cargo.toml)
+corrosion_import_crate(MANIFEST_PATH Cargo.toml)
+
+corrosion_experimental_cbindgen(
+    TARGET rusty
+    HEADER_NAME Rusty.h
+)
+
+# Set up the mod binary
+add_library(${PROJECT_NAME} SHARED
+    src/main.cpp
+    # Add any extra C++ source files here
+)
 
 target_link_libraries(${PROJECT_NAME} rusty)
-include_directories(${CMAKE_SOURCE_DIR}/target)
 
 if (NOT DEFINED ENV{GEODE_SDK})
     message(FATAL_ERROR "Unable to find Geode SDK! Please define GEODE_SDK environment variable to point to Geode")

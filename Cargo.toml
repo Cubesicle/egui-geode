@@ -8,6 +8,3 @@ path = "rusty-src/lib.rs"
 crate-type = ["staticlib"]
 
 [dependencies]
-
-[build-dependencies]
-cbindgen = "0.27"
