@@ -1,14 +1,14 @@
 {
-	"geode": "3.7.0",
-	"gd": {
-		"win": "2.206",
-		"android": "2.206",
-		"mac": "2.206",
-		"ios": "2.206"
-	},
-	"id": "cubesicle.test",
-	"name": "test",
-	"version": "v1.0.0",
-	"developer": "Cubesicle",
-	"description": ""
+    "geode": "3.7.0",
+    "gd": {
+        "win": "2.206",
+        "android": "2.206",
+        "mac": "2.206",
+        "ios": "2.206"
+    },
+    "id": "cubesicle.test",
+    "name": "test",
+    "version": "v1.0.0",
+    "developer": "Cubesicle",
+    "description": ""
 }
