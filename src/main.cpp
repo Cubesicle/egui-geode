@@ -1,10 +1,9 @@
 /**
  * Include the Geode headers.
  */
-#include "Geode/binding/PlayLayer.hpp"
 #include <Geode/Geode.hpp>
 #include <Geode/utils/addresser.hpp>
-#include "Rusty.h"
+#include <Rusty.h>
 
 /**
  * Brings cocos2d and all Geode namespaces to the current scope.
@@ -102,7 +101,7 @@ class $modify(MyMenuLayer, MenuLayer) {
     }
 };
 
-#include "Geode/modify/PlayLayer.hpp"
+#include <Geode/modify/PlayLayer.hpp>
 class $modify(PlayLayer) {
     void startGame() {
         bingus(getNonVirtual(this), getNonVirtual(&PlayLayer::startGame));
