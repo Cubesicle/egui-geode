@@ -1,7 +1,11 @@
-#include "ffi.h"
+extern "C" {
+    #include "ffi.h"
+}
 
 using namespace geode::prelude;
 
-void _log_info(char *str) {
-    log::info("{}", str);
+extern "C" {
+    void _log_info(char *str) {
+        log::info("{}", str);
+    }
 }

@@ -2,9 +2,6 @@ use std::env;
 use std::path::PathBuf;
 
 fn main() {
-    //println!("cargo:rustc-link-search={}/build", env::var("CARGO_MANIFEST_DIR").unwrap());
-    println!("cargo:rustc-link-lib={}/build/cubesicle.test.dll", env::var("CARGO_MANIFEST_DIR").unwrap());
-
     let bindings = bindgen::Builder::default()
         .header("src/ffi.h")
         .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
