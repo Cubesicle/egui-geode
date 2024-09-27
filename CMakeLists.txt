@@ -7,12 +7,6 @@ set(GEODE_TARGET_PLATFORM "Win64")
 
 project(test VERSION 1.0.0)
 
-# Set up the mod binary
-add_library(${PROJECT_NAME} SHARED
-    src/main.cpp
-    # Add any extra C++ source files here
-)
-
 include(FetchContent)
 
 FetchContent_Declare(
@@ -23,10 +17,40 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(Corrosion)
 
 # Import targets defined in a package or workspace manifest `Cargo.toml` file
-corrosion_import_crate(MANIFEST_PATH ${CMAKE_SOURCE_DIR}/Cargo.toml)
+corrosion_import_crate(
+    MANIFEST_PATH Cargo.toml
+)
 
-target_link_libraries(${PROJECT_NAME} rusty)
-include_directories(${CMAKE_SOURCE_DIR}/target)
+#corrosion_experimental_cbindgen(
+#    TARGET rusty
+#    HEADER_NAME Rusty.h
+#)
+
+corrosion_add_cxxbridge(
+    cxxbridge-cpp
+    CRATE rusty
+    FILES lib.rs
+)
+
+# Set up the mod binary
+add_library(${PROJECT_NAME} SHARED
+    src/main.cpp
+    # Add any extra C++ source files here
+)
+
+target_include_directories(cxxbridge-cpp PRIVATE "$ENV{GEODE_SDK}/loader/include")
+target_include_directories(cxxbridge-cpp PRIVATE "$ENV{GEODE_SDK}/loader/include/Geode/cocos/include")
+target_include_directories(cxxbridge-cpp PRIVATE "$ENV{GEODE_SDK}/loader/include/Geode/cocos/extensions")
+target_include_directories(cxxbridge-cpp PRIVATE "build/bindings/bindings")
+target_include_directories(cxxbridge-cpp PRIVATE "build/_deps/bindings-src/bindings/include")
+target_include_directories(cxxbridge-cpp PRIVATE "build/_deps/fmt-src/include")
+target_include_directories(cxxbridge-cpp PRIVATE "build/_deps/json-src/include")
+target_link_libraries(${PROJECT_NAME} cxxbridge-cpp)
+
+#if(MSVC)
+#    # Note: This is required because we use `cxx` which uses `cc` to compile and link C++ code.
+#    corrosion_set_env_vars(geode "CFLAGS=-MDd" "CXXFLAGS=-MDd")
+#endif()
 
 if (NOT DEFINED ENV{GEODE_SDK})
     message(FATAL_ERROR "Unable to find Geode SDK! Please define GEODE_SDK environment variable to point to Geode")

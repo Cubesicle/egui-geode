@@ -101,14 +101,11 @@ class $modify(MyMenuLayer, MenuLayer) {
 };
 
 #include "Geode/modify/PlayLayer.hpp"
+#include "cxxbridge-cpp/lib.h"
 class $modify(PlayLayer) {
 	void startGame() {
-		log::info("fuck you lmao");
+		bingus();
+		log::info("all good");
 		PlayLayer::startGame();
 	}
-};
-
-#include "Rusty.h"
-$on_mod(Loaded) {
-	peepeepoopoo();
 };
