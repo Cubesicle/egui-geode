@@ -6,8 +6,8 @@
         "mac": "2.206",
         "ios": "2.206"
     },
-    "id": "cubesicle.test",
-    "name": "test",
+    "id": "cubesicle.geode-rust-test",
+    "name": "Geode Rust Test",
     "version": "v1.0.0",
     "developer": "Cubesicle",
     "description": ""
