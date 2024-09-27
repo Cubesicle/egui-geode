@@ -25,10 +25,7 @@ corrosion_experimental_cbindgen(
 )
 
 # Set up the mod binary
-add_library(${PROJECT_NAME} SHARED
-    src/main.cpp
-    # Add any extra C++ source files here
-)
+add_library(${PROJECT_NAME} SHARED src/main.cpp src/ffi.cpp)
 
 target_link_libraries(${PROJECT_NAME} rusty)
 
