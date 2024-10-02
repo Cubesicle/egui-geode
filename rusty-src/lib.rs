@@ -1,6 +1,8 @@
 mod geode;
 
-use geode::log;
+use std::mem::transmute;
+
+use geode::{gl, log};
 
 #[no_mangle]
 pub extern "C" fn bingus(this_ptr: isize, fn_ptr: isize) {
@@ -8,5 +10,13 @@ pub extern "C" fn bingus(this_ptr: isize, fn_ptr: isize) {
     log::info(format!("example info"));
     log::warn(format!("example warning"));
     log::error(format!("example error"));
-    unsafe { std::mem::transmute::<_, fn(isize)>(fn_ptr)(this_ptr); }
+    unsafe { transmute::<_, fn(isize)>(fn_ptr)(this_ptr); }
+}
+
+#[no_mangle]
+pub extern "C" fn swap_buffers_detour() {
+    let thing = unsafe {
+        gl::gl_get_proc_address("wglCopyContext")
+    };
+    log::debug(format!("{:?}", thing));
 }
