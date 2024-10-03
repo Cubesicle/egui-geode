@@ -1,29 +1,22 @@
 use std::ffi::CString;
-
-include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
+use super::bindings::{log_debug, log_info, log_warn, log_error};
 
 pub fn debug(string: String) {
-    if let Ok(s) = CString::new(string) {
-        unsafe { _log_debug(CString::into_raw(s)); }
-    }
+    let s = CString::new(string).unwrap_or_default().into_raw();
+    unsafe { log_debug(s); }
 }
 
 pub fn info(string: String) {
-    if let Ok(s) = CString::new(string) {
-        unsafe { _log_info(CString::into_raw(s)); }
-    }
+    let s = CString::new(string).unwrap_or_default().into_raw();
+    unsafe { log_info(s); }
 }
-
 
 pub fn warn(string: String) {
-    if let Ok(s) = CString::new(string) {
-        unsafe { _log_warn(CString::into_raw(s)); }
-    }
+    let s = CString::new(string).unwrap_or_default().into_raw();
+    unsafe { log_warn(s); }
 }
 
-
 pub fn error(string: String) {
-    if let Ok(s) = CString::new(string) {
-        unsafe { _log_error(CString::into_raw(s)); }
-    }
+    let s = CString::new(string).unwrap_or_default().into_raw();
+    unsafe { log_error(s); }
 }
