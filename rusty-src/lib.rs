@@ -1,5 +1,5 @@
-use std::{mem::transmute, sync::Arc};
-use anyhow::{Context, Ok, Result};
+use std::{ffi::c_uint, mem::transmute, sync::Arc};
+use anyhow::{Context, Result};
 use geode::{gl, log};
 
 mod geode;
@@ -21,8 +21,8 @@ pub extern "C" fn bingus(this_ptr: isize, fn_ptr: isize) {
 }
 
 #[no_mangle]
-pub extern "C" fn swap_buffers_detour() {
-    let _ = _swap_buffers_detour().map_err(|e| log::error(e.to_string()));
+pub extern "C" fn swap_buffers_detour(frame_width: c_uint, frame_height: c_uint) {
+    let _ = _swap_buffers_detour((frame_width, frame_height)).map_err(|e| log::error(e.to_string()));
 }
 
 fn _init_gui() -> Result<()> {
@@ -33,8 +33,8 @@ fn _init_gui() -> Result<()> {
     Ok(())
 }
 
-fn _swap_buffers_detour() -> Result<()> {
-    gui::GLOBAL_GUI.lock().ok().context("wtf")?.paint()?;   
+fn _swap_buffers_detour(frame_size: (u32, u32)) -> Result<()> {
+    gui::GLOBAL_GUI.lock().ok().context("wtf")?.paint(frame_size)?;
 
     Ok(())
 }
