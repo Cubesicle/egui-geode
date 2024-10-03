@@ -7,6 +7,8 @@ pub struct Gui {
     initialized: bool,
     egui_ctx: Option<egui::Context>,
     painter: Option<egui_glow::Painter>,
+    modifiers: egui::Modifiers,
+    events: Vec<egui::Event>,
     checkbox_checked: bool,
 }
 
@@ -38,7 +40,15 @@ impl Gui {
             shapes,
             pixels_per_point,
             viewport_output: _,
-        } = egui_ctx.run(Self::get_raw_input(frame_size), |ctx| {
+        } = egui_ctx.run(egui::RawInput {
+            screen_rect: Some(egui::Rect {
+                min: egui::pos2(0.0, 0.0),
+                max: egui::pos2(frame_size.0 as f32, frame_size.1 as f32),
+            }),
+            modifiers: self.modifiers,
+            events: std::mem::take(&mut self.events),
+            ..Default::default()
+        }, |ctx| {
             egui::Window::new("Freak bot 😝").collapsible(false).show(ctx, |ui| {
                 ui.label("it works!");
                 ui.label("it works!");
@@ -67,23 +77,25 @@ impl Gui {
 
         Ok(())
     }
+    
+    pub fn register_event(&mut self, event: egui::Event) {
+        self.events.push(event);
+    }
 
     const fn new() -> Self {
         Self {
             initialized: false,
             egui_ctx: None,
             painter: None,
+            modifiers: egui::Modifiers {
+                alt: false,
+                ctrl: false,
+                shift: false,
+                mac_cmd: false,
+                command: false,
+            },
+            events: Vec::new(),
             checkbox_checked: false,
-        }
-    }
-    
-    fn get_raw_input(frame_size: (u32, u32)) -> egui::RawInput {
-        egui::RawInput {
-            screen_rect: Some(egui::Rect {
-                min: egui::pos2(0.0, 0.0),
-                max: egui::pos2(frame_size.0 as f32, frame_size.1 as f32),
-            }),
-            ..Default::default()
         }
     }
 }

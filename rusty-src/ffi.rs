@@ -1,6 +1,6 @@
 use std::sync::Arc;
 use anyhow::{Context, Result};
-use crate::geode::gl;
+use crate::geode::{gl, log};
 use crate::gui;
 
 pub fn init_gui() -> Result<()> {
@@ -11,8 +11,10 @@ pub fn init_gui() -> Result<()> {
     Ok(())
 }
 
-pub fn swap_buffers_detour(frame_size: (u32, u32)) -> Result<()> {
-    gui::GLOBAL_GUI.lock().ok().context("wtf")?.paint(frame_size)?;
+pub fn swap_buffers_detour(frame_size: (u32, u32), mouse_pos: (f32, f32)) -> Result<()> {
+    let mut gui = gui::GLOBAL_GUI.lock().ok().context("wtf")?;
+    gui.register_event(egui::Event::PointerMoved(egui::Pos2::from(mouse_pos)));
+    gui.paint(frame_size)?;
 
     Ok(())
 }

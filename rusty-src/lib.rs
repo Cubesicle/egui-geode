@@ -1,4 +1,4 @@
-use std::{ffi::c_uint, mem::transmute};
+use std::{ffi::{c_float, c_uint}, mem::transmute};
 use anyhow::Result;
 use geode::log;
 
@@ -12,6 +12,11 @@ pub extern "C" fn init_gui() {
 }
 
 #[no_mangle]
+pub extern "C" fn swap_buffers_detour(frame_width: c_uint, frame_height: c_uint, mouse_x: c_float, mouse_y: c_float) {
+    print_err(ffi::swap_buffers_detour((frame_width, frame_height), (mouse_x, mouse_y)));
+}
+
+#[no_mangle]
 pub extern "C" fn bingus(this_ptr: isize, fn_ptr: isize) {
     log::debug(format!("Hello from rust!! >:) {:#06x} {:#06x}", this_ptr, fn_ptr));
     log::info(format!("example info"));
@@ -19,11 +24,6 @@ pub extern "C" fn bingus(this_ptr: isize, fn_ptr: isize) {
     log::error(format!("example error"));
     
     unsafe { transmute::<_, fn(isize)>(fn_ptr)(this_ptr); }
-}
-
-#[no_mangle]
-pub extern "C" fn swap_buffers_detour(frame_width: c_uint, frame_height: c_uint) {
-    print_err(ffi::swap_buffers_detour((frame_width, frame_height)));
 }
 
 fn print_err(result: Result<()>) {
