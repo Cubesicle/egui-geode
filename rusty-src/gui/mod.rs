@@ -31,7 +31,7 @@ impl Gui {
     }
 
     // Code taken from https://github.com/spinningtoilet0/egui_glow_internal
-    pub fn paint(&mut self, frame_size: (u32, u32)) -> Result<()> {
+    pub fn paint(&mut self, frame_size: (f32, f32)) -> Result<()> {
         let egui_ctx = self.egui_ctx.as_ref().context(GUI_NOT_INITIALIZED)?;
         let painter = self.painter.as_mut().context(GUI_NOT_INITIALIZED)?;
 
@@ -44,7 +44,7 @@ impl Gui {
         } = egui_ctx.run(egui::RawInput {
             screen_rect: Some(egui::Rect {
                 min: egui::pos2(0.0, 0.0),
-                max: egui::pos2(frame_size.0 as f32, frame_size.1 as f32),
+                max: egui::pos2(frame_size.0, frame_size.1),
             }),
             modifiers: self.modifiers,
             events: std::mem::take(&mut self.events),
@@ -67,7 +67,7 @@ impl Gui {
         let clipped_primitives = egui_ctx.tessellate(shapes, pixels_per_point);
     
         painter.paint_primitives(
-            [frame_size.0, frame_size.1],
+            [frame_size.0 as u32, frame_size.1 as u32],
             egui_ctx.pixels_per_point(),
             &clipped_primitives,
         );
