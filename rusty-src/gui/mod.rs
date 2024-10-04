@@ -1,5 +1,6 @@
 use std::sync::{Arc, Mutex};
 use anyhow::{ensure, Context, Result};
+use crate::error_messages::{GUI_ALREADY_INITIALIZED, GUI_NOT_INITIALIZED, PAINTER_INITIALIZE_FAIL};
 
 pub static GLOBAL_GUI: Mutex<Gui> = Mutex::new(Gui::new());
 
@@ -20,9 +21,9 @@ impl Default for Gui {
 
 impl Gui {
     pub fn init(&mut self, gl_ctx: Arc<egui_glow::glow::Context>) -> Result<()> {
-        ensure!(self.initialized == false, "Gui already initialized");
+        ensure!(self.initialized == false, GUI_ALREADY_INITIALIZED);
 
-        self.painter = Some(egui_glow::Painter::new(gl_ctx, "", None, true).context("Failed to initialize painter")?);
+        self.painter = Some(egui_glow::Painter::new(gl_ctx, "", None, true).context(PAINTER_INITIALIZE_FAIL)?);
         self.egui_ctx = Some(egui::Context::default());
         self.initialized = true;
 
@@ -31,8 +32,8 @@ impl Gui {
 
     // Code taken from https://github.com/spinningtoilet0/egui_glow_internal
     pub fn paint(&mut self, frame_size: (u32, u32)) -> Result<()> {
-        let egui_ctx = self.egui_ctx.as_ref().context("Gui not initialized")?;
-        let painter = self.painter.as_mut().context("Gui not initialized")?;
+        let egui_ctx = self.egui_ctx.as_ref().context(GUI_NOT_INITIALIZED)?;
+        let painter = self.painter.as_mut().context(GUI_NOT_INITIALIZED)?;
 
         let egui::FullOutput {
             platform_output: _,
@@ -49,7 +50,7 @@ impl Gui {
             events: std::mem::take(&mut self.events),
             ..Default::default()
         }, |ctx| {
-            egui::Window::new("Freak bot 😝").collapsible(false).show(ctx, |ui| {
+            egui::Window::new("Freak bot 😝").show(ctx, |ui| {
                 ui.label("it works!");
                 ui.label("it works!");
                 ui.label("it works!");
@@ -78,8 +79,20 @@ impl Gui {
         Ok(())
     }
     
-    pub fn register_event(&mut self, event: egui::Event) {
+    pub fn register_event(&mut self, event: egui::Event) -> Result<()> {
+        ensure!(self.initialized == true, GUI_NOT_INITIALIZED);
+
         self.events.push(event);
+
+        Ok(())
+    }
+    
+    pub fn wants_pointer_input(&self) -> Result<bool> {
+        Ok(self.egui_ctx.as_ref().context(GUI_NOT_INITIALIZED)?.wants_pointer_input())
+    }
+
+    pub fn wants_keyboard_input(&self) -> Result<bool> {
+        Ok(self.egui_ctx.as_ref().context(GUI_NOT_INITIALIZED)?.wants_keyboard_input())
     }
 
     const fn new() -> Self {
