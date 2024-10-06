@@ -32,6 +32,11 @@ $on_mod(Loaded) {
 #include <Geode/modify/CCTouchDispatcher.hpp>
 class $modify(CCTouchDispatcher) {
 	void touches(CCSet *touches, CCEvent *event, unsigned int type) {
+        if (!gui_wants_pointer_input()) {
+            CCTouchDispatcher::touches(touches, event, type);
+            return;
+        }
+
         auto* touch = static_cast<CCTouch*>(touches->anyObject());
         const auto touch_pos = convert_cocos_point(touch->getLocation());
         if (type == CCTOUCHBEGAN) {
@@ -41,6 +46,7 @@ class $modify(CCTouchDispatcher) {
                 false,
                 true
             );
+            return;
         } else if (type == CCTOUCHENDED || type == CCTOUCHCANCELLED) {
             gui_send_mouse_btn(
                 std::get<0>(touch_pos),
@@ -49,8 +55,6 @@ class $modify(CCTouchDispatcher) {
                 false
             );
         }
-
-        if (gui_wants_pointer_input()) type = CCTOUCHCANCELLED;
 
         CCTouchDispatcher::touches(touches, event, type);
     }

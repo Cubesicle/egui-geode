@@ -1,4 +1,4 @@
-use std::sync::{Arc, Mutex};
+use std::{sync::{Arc, Mutex}, time::SystemTime};
 use anyhow::{ensure, Context, Result};
 use crate::error_messages::{GUI_ALREADY_INITIALIZED, GUI_NOT_INITIALIZED, PAINTER_INITIALIZE_FAIL};
 
@@ -46,6 +46,7 @@ impl Gui {
                 min: egui::pos2(0.0, 0.0),
                 max: egui::pos2(frame_size.0, frame_size.1),
             }),
+            time: Some(SystemTime::now().duration_since(SystemTime::UNIX_EPOCH)?.as_secs_f64()),
             modifiers: self.modifiers,
             events: std::mem::take(&mut self.events),
             ..Default::default()
