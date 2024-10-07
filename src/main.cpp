@@ -37,7 +37,7 @@ class $modify(CCTouchDispatcher) {
             return;
         }
 
-        auto* touch = static_cast<CCTouch*>(touches->anyObject());
+        auto *touch = static_cast<CCTouch*>(touches->anyObject());
         const auto touch_pos = convert_cocos_point(touch->getLocation());
         if (type == CCTOUCHBEGAN) {
             gui_send_mouse_btn(
