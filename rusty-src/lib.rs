@@ -23,32 +23,30 @@ pub extern "C" fn swap_buffers_detour(frame_w: f32, frame_h: f32) {
 
 #[no_mangle]
 pub extern "C" fn gui_send_mouse_pos(mouse_x: f32, mouse_y: f32) {
-    let _ = (|| gui::GLOBAL_GUI.lock().ok().context(MUTEX_LOCK_FAIL)?.register_event(
-        egui::Event::PointerMoved(egui::pos2(mouse_x, mouse_y))       
+    let _ = (|| gui::GLOBAL_GUI.lock().ok().context(MUTEX_LOCK_FAIL)?.send_mouse_pos(
+        egui::pos2(mouse_x, mouse_y)
     ))().map_err(print_err);
 }
 
-#[no_mangle]
-pub extern "C" fn gui_send_mouse_btn(mouse_x: f32, mouse_y: f32, right: bool, pressed: bool) {
-    let _ = (|| gui::GLOBAL_GUI.lock().ok().context(MUTEX_LOCK_FAIL)?.register_event(
-        egui::Event::PointerButton {
-            pos: egui::pos2(mouse_x, mouse_y),
-            button: if right {
-                egui::PointerButton::Secondary
-            } else {
-                egui::PointerButton::Primary
-            },
-            pressed,
-            modifiers: egui::Modifiers::default(), // TODO: add modifiers
-        }
-    ))().map_err(print_err);
-}
+//#[no_mangle]
+//pub extern "C" fn gui_send_mouse_button(mouse_x: f32, mouse_y: f32, button: u32, pressed: bool) {
+//    let _ = (|| gui::GLOBAL_GUI.lock().ok().context(MUTEX_LOCK_FAIL)?.send_mouse_button(
+//        egui::pos2(mouse_x, mouse_y)
+//    ))().map_err(print_err);
+//}
 
 #[no_mangle]
-pub extern "C" fn gui_wants_pointer_input() -> bool {
-    (||
-        gui::GLOBAL_GUI.lock().ok().context(MUTEX_LOCK_FAIL)?.wants_pointer_input()
-    )().map_err(print_err).unwrap_or_default()
+pub extern "C" fn gui_send_touch(id: u64, phase: u32, touch_x: f32, touch_y: f32) -> bool {
+    (|| gui::GLOBAL_GUI.lock().ok().context(MUTEX_LOCK_FAIL)?.send_touch(
+        egui::TouchId(id),
+        match phase {
+            0 => egui::TouchPhase::Start,
+            1 => egui::TouchPhase::Move,
+            2 => egui::TouchPhase::End,
+            _ => egui::TouchPhase::Cancel,
+        },
+        egui::pos2(touch_x, touch_y)
+    ))().map_err(print_err).unwrap_or_default()
 }
 
 #[no_mangle]

@@ -2,9 +2,9 @@ use std::{sync::{Arc, Mutex}, time::SystemTime};
 use anyhow::{ensure, Context, Result};
 use crate::error_messages::{GUI_ALREADY_INITIALIZED, GUI_NOT_INITIALIZED, PAINTER_INITIALIZE_FAIL};
 
-pub static GLOBAL_GUI: Mutex<Gui> = Mutex::new(Gui::new());
+pub static GLOBAL_GUI: Mutex<GuiBackend> = Mutex::new(GuiBackend::new());
 
-pub struct Gui {
+pub struct GuiBackend {
     initialized: bool,
     egui_ctx: Option<egui::Context>,
     painter: Option<egui_glow::Painter>,
@@ -13,15 +13,15 @@ pub struct Gui {
     checkbox_checked: bool,
 }
 
-impl Default for Gui {
+impl Default for GuiBackend {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl Gui {
+impl GuiBackend {
     pub fn init(&mut self, gl_ctx: Arc<egui_glow::glow::Context>) -> Result<()> {
-        ensure!(self.initialized == false, GUI_ALREADY_INITIALIZED);
+        ensure!(!self.initialized, GUI_ALREADY_INITIALIZED);
 
         self.painter = Some(egui_glow::Painter::new(gl_ctx, "", None, true).context(PAINTER_INITIALIZE_FAIL)?);
         self.egui_ctx = Some(egui::Context::default());
@@ -80,20 +80,52 @@ impl Gui {
         Ok(())
     }
     
-    pub fn register_event(&mut self, event: egui::Event) -> Result<()> {
-        ensure!(self.initialized == true, GUI_NOT_INITIALIZED);
+    pub fn send_mouse_pos(&mut self, pos: egui::Pos2) -> Result<()> {
+        ensure!(self.initialized, GUI_NOT_INITIALIZED);
 
-        self.events.push(event);
-
+        self.events.push(egui::Event::PointerMoved(pos));
+        
         Ok(())
     }
     
-    pub fn wants_pointer_input(&self) -> Result<bool> {
-        Ok(self.egui_ctx.as_ref().context(GUI_NOT_INITIALIZED)?.wants_pointer_input())
-    }
+    pub fn send_mouse_button(&mut self, pos: egui::Pos2, button: egui::PointerButton, pressed: bool) -> Result<bool> {
+        let egui_ctx = self.egui_ctx.as_ref().context(GUI_NOT_INITIALIZED)?;
+        let should_block = pressed && egui_ctx.wants_pointer_input();
+        
+        self.events.push(egui::Event::PointerButton {
+            pos,
+            button,
+            pressed,
+            modifiers: self.modifiers,
+        });
 
-    pub fn wants_keyboard_input(&self) -> Result<bool> {
-        Ok(self.egui_ctx.as_ref().context(GUI_NOT_INITIALIZED)?.wants_keyboard_input())
+        Ok(should_block)
+    }
+    
+    pub fn send_touch(&mut self, id: egui::TouchId, phase: egui::TouchPhase, pos: egui::Pos2) -> Result<bool> {
+        ensure!(self.initialized, GUI_NOT_INITIALIZED);
+        
+        use egui::TouchPhase::{Start, End};
+        use egui::PointerButton::Primary;
+        let should_block = match phase {
+            Start => {
+                self.send_mouse_button(pos, Primary, true)?
+            },
+            End => {
+                self.send_mouse_button(pos, Primary, false)?; false
+            },
+            _ => false,
+        };
+        
+        self.events.push(egui::Event::Touch {
+            device_id: egui::TouchDeviceId(0),
+            id,
+            phase,
+            pos,
+            force: None,
+        });
+
+        Ok(should_block)
     }
 
     const fn new() -> Self {
