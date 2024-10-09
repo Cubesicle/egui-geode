@@ -1,30 +1,14 @@
-#include "Rusty.h"
-
+#include "rusty.h"
+#include "gl_util.hpp"
 using namespace geode::prelude;
 
-HGLRC new_ctx;
+std::tuple<float, float> convert_cocos_point(CCPoint point);
 
-void run_in_ctx(HGLRC ctx, std::function<void()> const& fn) {
-    const auto old_ctx = wglGetCurrentContext();
-    wglMakeCurrent(wglGetCurrentDC(), ctx);
-    fn();
-    wglMakeCurrent(wglGetCurrentDC(), old_ctx);
-}
-
-// Code taken from https://github.com/matcool/gd-imgui-cocos
-std::tuple<float, float> convert_cocos_point(CCPoint point) {
-    const auto director = CCDirector::sharedDirector();
-    const auto window_size = director->getWinSize();
-    const auto frame_size = director->getOpenGLView()->getFrameSize() * utils::getDisplayFactor();
-    return {
-        point.x / window_size.width * frame_size.width,
-        (1.f - point.y / window_size.height) * frame_size.height
-    };
-}
+GLContext new_context;
 
 $on_mod(Loaded) {
-    new_ctx = wglCreateContext(wglGetCurrentDC());
-    run_in_ctx(new_ctx, []() {
+    new_context = gl_create_context();
+    run_in_context(new_context, []() {
         init_gui();
     });
 }
@@ -51,7 +35,7 @@ class $modify(CCEGLView) {
         gui_send_mouse_pos(std::get<0>(mouse_pos), std::get<1>(mouse_pos));
 
         const auto frame_size = getFrameSize();
-        run_in_ctx(new_ctx, [frame_size]() {
+        run_in_context(new_context, [frame_size]() {
             swap_buffers_detour(frame_size.width, frame_size.height);
         });
 
@@ -65,3 +49,14 @@ class $modify(PlayLayer) {
         bingus(getNonVirtual(this), getNonVirtual(&PlayLayer::startGame));
     }
 };
+
+// Code taken from https://github.com/matcool/gd-imgui-cocos
+std::tuple<float, float> convert_cocos_point(CCPoint point) {
+    const auto director = CCDirector::sharedDirector();
+    const auto window_size = director->getWinSize();
+    const auto frame_size = director->getOpenGLView()->getFrameSize() * utils::getDisplayFactor();
+    return {
+        point.x / window_size.width * frame_size.width,
+        (1.f - point.y / window_size.height) * frame_size.height
+    };
+}

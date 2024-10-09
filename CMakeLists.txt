@@ -21,13 +21,17 @@ corrosion_import_crate(MANIFEST_PATH Cargo.toml)
 
 corrosion_experimental_cbindgen(
     TARGET rusty
-    HEADER_NAME Rusty.h
+    HEADER_NAME rusty.h
 )
 
 # Set up the mod binary
-add_library(${PROJECT_NAME} SHARED src/main.cpp src/ffi.cpp)
+add_library(${PROJECT_NAME} SHARED src/main.cpp src/gl_util.cpp src/ffi.cpp)
 
-target_link_libraries(${PROJECT_NAME} rusty)
+if (ANDROID)
+    target_link_libraries(${PROJECT_NAME} rusty EGL)
+else()
+    target_link_libraries(${PROJECT_NAME} rusty)
+endif()
 
 if (NOT DEFINED ENV{GEODE_SDK})
     message(FATAL_ERROR "Unable to find Geode SDK! Please define GEODE_SDK environment variable to point to Geode")
