@@ -105,14 +105,31 @@ impl GuiBackend {
     pub fn send_touch(&mut self, id: egui::TouchId, phase: egui::TouchPhase, pos: egui::Pos2) -> Result<bool> {
         ensure!(self.initialized, GUI_NOT_INITIALIZED);
         
-        use egui::TouchPhase::{Start, End};
+        use egui::TouchPhase::{Start, Move, End};
         use egui::PointerButton::Primary;
         let should_block = match phase {
             Start => {
-                self.send_mouse_button(pos, Primary, true)?
+                self.send_mouse_button(pos, Primary, true)?;
+
+                let egui_ctx = self.egui_ctx.as_ref().context(GUI_NOT_INITIALIZED)?;
+                if let Some(layer) = egui_ctx.layer_id_at(pos) {
+                    if layer.order == egui::Order::Background {
+                        !egui_ctx.viewport(|v| v.this_pass.unused_rect.contains(pos))
+                    } else {
+                        true
+                    }
+                } else {
+                    false
+                }
+            },
+            Move => {
+                self.send_mouse_pos(pos)?;
+                false
             },
             End => {
-                self.send_mouse_button(pos, Primary, false)?; false
+                self.send_mouse_button(pos, Primary, false)?;
+                self.events.push(egui::Event::PointerGone);
+                false
             },
             _ => false,
         };

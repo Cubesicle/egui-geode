@@ -24,7 +24,7 @@ class $modify(CCTouchDispatcher) {
         const auto touch = static_cast<CCTouch *>(touches->anyObject());
         const auto touch_pos = convert_cocos_point(touch->getLocation());
         if (gui_send_touch(touch->getID(), type, std::get<0>(touch_pos), std::get<1>(touch_pos))) {
-            return;
+            touches->removeObject(touch);
         }
 
         CCTouchDispatcher::touches(touches, event, type);
@@ -34,8 +34,10 @@ class $modify(CCTouchDispatcher) {
 #include <Geode/modify/CCEGLView.hpp>
 class $modify(CCEGLView) {
     void swapBuffers() {
-        const auto mouse_pos = convert_cocos_point(cocos::getMousePos());
-        gui_send_mouse_pos(std::get<0>(mouse_pos), std::get<1>(mouse_pos));
+        #ifdef GEODE_IS_DESKTOP
+            const auto mouse_pos = convert_cocos_point(cocos::getMousePos());
+            gui_send_mouse_pos(std::get<0>(mouse_pos), std::get<1>(mouse_pos));
+        #endif
 
         const auto frame_size = getFrameSize();
         run_in_context([frame_size]() {
