@@ -14,13 +14,6 @@ $on_mod(Loaded) {
 #include <Geode/modify/CCTouchDispatcher.hpp>
 class $modify(CCTouchDispatcher) {
 	void touches(CCSet *touches, CCEvent *event, unsigned int type) {
-        //for (auto it = touches->begin(); it != touches->end(); it++) {
-        //    const auto touch = static_cast<CCTouch *>(*it);
-        //    const auto touch_pos = convert_cocos_point(touch->getLocation());
-        //    if (gui_send_touch(touch->getID(), type, std::get<0>(touch_pos), std::get<1>(touch_pos))) {
-        //        touches->removeObject(touch);
-        //    }
-        //}
         const auto touch = static_cast<CCTouch *>(touches->anyObject());
         const auto touch_pos = convert_cocos_point(touch->getLocation());
         if (gui_send_touch(touch->getID(), type, std::get<0>(touch_pos), std::get<1>(touch_pos))) {
@@ -45,13 +38,6 @@ class $modify(CCEGLView) {
         });
 
         CCEGLView::swapBuffers();
-    }
-};
-
-#include <Geode/modify/PlayLayer.hpp>
-class $modify(PlayLayer) {
-    void startGame() {
-        bingus(getNonVirtual(this), getNonVirtual(&PlayLayer::startGame));
     }
 };
 

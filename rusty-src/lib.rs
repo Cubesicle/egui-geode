@@ -49,16 +49,6 @@ pub extern "C" fn gui_send_touch(id: u64, phase: u32, touch_x: f32, touch_y: f32
     ))().map_err(print_err).unwrap_or_default()
 }
 
-#[no_mangle]
-pub extern "C" fn bingus(this_ptr: isize, fn_ptr: isize) {
-    log::debug(format!("Hello from rust!! >:) {:#06x} {:#06x}", this_ptr, fn_ptr));
-    log::info(format!("example info"));
-    log::warn(format!("example warning"));
-    log::error(format!("example error"));
-    
-    unsafe { transmute::<_, fn(isize)>(fn_ptr)(this_ptr); }
-}
-
 fn print_err(e: Error) {
     log::error(e.to_string());
 }
