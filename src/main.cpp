@@ -4,11 +4,9 @@ using namespace geode::prelude;
 
 std::tuple<float, float> convert_cocos_point(CCPoint point);
 
-GLContext new_context;
-
 $on_mod(Loaded) {
-    new_context = gl_create_context();
-    run_in_context(new_context, []() {
+    init_context();
+    run_in_context([]() {
         init_gui();
     });
 }
@@ -16,12 +14,17 @@ $on_mod(Loaded) {
 #include <Geode/modify/CCTouchDispatcher.hpp>
 class $modify(CCTouchDispatcher) {
 	void touches(CCSet *touches, CCEvent *event, unsigned int type) {
-        for (auto it = touches->begin(); it != touches->end(); it++) {
-            const auto touch = static_cast<CCTouch *>(*it);
-            const auto touch_pos = convert_cocos_point(touch->getLocation());
-            if (gui_send_touch(touch->getID(), type, std::get<0>(touch_pos), std::get<1>(touch_pos))) {
-                touches->removeObject(touch);
-            }
+        //for (auto it = touches->begin(); it != touches->end(); it++) {
+        //    const auto touch = static_cast<CCTouch *>(*it);
+        //    const auto touch_pos = convert_cocos_point(touch->getLocation());
+        //    if (gui_send_touch(touch->getID(), type, std::get<0>(touch_pos), std::get<1>(touch_pos))) {
+        //        touches->removeObject(touch);
+        //    }
+        //}
+        const auto touch = static_cast<CCTouch *>(touches->anyObject());
+        const auto touch_pos = convert_cocos_point(touch->getLocation());
+        if (gui_send_touch(touch->getID(), type, std::get<0>(touch_pos), std::get<1>(touch_pos))) {
+            return;
         }
 
         CCTouchDispatcher::touches(touches, event, type);
@@ -35,7 +38,7 @@ class $modify(CCEGLView) {
         gui_send_mouse_pos(std::get<0>(mouse_pos), std::get<1>(mouse_pos));
 
         const auto frame_size = getFrameSize();
-        run_in_context(new_context, [frame_size]() {
+        run_in_context([frame_size]() {
             swap_buffers_detour(frame_size.width, frame_size.height);
         });
 

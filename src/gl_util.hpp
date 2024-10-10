@@ -7,7 +7,8 @@
 
     typedef EGLContext GLContext;
 #endif
-
+    
+static GLContext new_context;
 extern "C" const void *gl_get_proc_address(const char *str);
-GLContext gl_create_context();
-void run_in_context(GLContext ctx, std::function<void()> const &fn);
+void init_context();
+void run_in_context(std::function<void()> const &fn);
