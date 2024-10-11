@@ -17,11 +17,11 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(Corrosion)
 
 # Import targets defined in a package or workspace manifest `Cargo.toml` file
-corrosion_import_crate(MANIFEST_PATH rusty/Cargo.toml)
+corrosion_import_crate(MANIFEST_PATH rust-ffi/Cargo.toml)
 
 corrosion_experimental_cbindgen(
-    TARGET rusty
-    HEADER_NAME rusty.h
+    TARGET rust_ffi
+    HEADER_NAME rust_ffi.h
 )
 
 add_library(${PROJECT_NAME} SHARED
@@ -31,7 +31,7 @@ add_library(${PROJECT_NAME} SHARED
 
 add_subdirectory(.. ${CMAKE_CURRENT_BINARY_DIR}/egui-geode)
 
-target_link_libraries(${PROJECT_NAME} EguiGeode rusty)
+target_link_libraries(${PROJECT_NAME} EguiGeode rust_ffi)
 
 if (NOT DEFINED ENV{GEODE_SDK})
     message(FATAL_ERROR "Unable to find Geode SDK! Please define GEODE_SDK environment variable to point to Geode")

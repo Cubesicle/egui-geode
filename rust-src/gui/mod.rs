@@ -10,7 +10,7 @@ pub struct GuiBackend {
     painter: Option<egui_glow::Painter>,
     modifiers: egui::Modifiers,
     events: Vec<egui::Event>,
-    run_fn: Option<Arc<Mutex<dyn FnMut(&egui::Context) + Send>>>,
+    run_fn: Option<fn (&egui::Context)>,
 }
 
 impl Default for GuiBackend {
@@ -20,7 +20,7 @@ impl Default for GuiBackend {
 }
 
 impl GuiBackend {
-    pub fn init(&mut self, gl_ctx: Arc<egui_glow::glow::Context>, run_fn: Arc<Mutex<dyn FnMut(&egui::Context) + Send>>) -> Result<()> {
+    pub fn init(&mut self, gl_ctx: Arc<egui_glow::glow::Context>, run_fn: fn(&egui::Context)) -> Result<()> {
         ensure!(!self.initialized, GUI_ALREADY_INITIALIZED);
 
         self.painter = Some(egui_glow::Painter::new(gl_ctx, "", None, true).context(PAINTER_INITIALIZE_FAIL)?);
@@ -51,7 +51,7 @@ impl GuiBackend {
             modifiers: self.modifiers,
             events: std::mem::take(&mut self.events),
             ..Default::default()
-        }, |ctx| self.run_fn.as_ref().unwrap().lock().unwrap()(ctx));
+        }, self.run_fn.context(GUI_NOT_INITIALIZED)?);
         
         for (id, image_delta) in textures_delta.set {
             painter.set_texture(id, &image_delta);

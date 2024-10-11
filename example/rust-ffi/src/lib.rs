@@ -6,7 +6,7 @@ static mut CHECKBOX_CHECKED: bool = false;
 
 #[no_mangle]
 pub extern "C" fn init_gui() {
-    egui_geode_rust::init_gui(Arc::new(Mutex::new(|ctx: &egui::Context| {
+    egui_geode_rust::init_gui(|ctx: &egui::Context| {
         egui::Window::new("Freak bot 😛").show(ctx, |ui| {
             ui.label("it works!");
             ui.label("it works!");
@@ -19,7 +19,7 @@ pub extern "C" fn init_gui() {
             ui.label("freaky message:");
             ui.text_edit_singleline(unsafe { &mut INPUT_STRING });
         });
-    })));
+    });
 }
 
 #[no_mangle]

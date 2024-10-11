@@ -20,7 +20,7 @@ FetchContent_MakeAvailable(Corrosion)
 corrosion_import_crate(MANIFEST_PATH rust-ffi/Cargo.toml)
 
 corrosion_experimental_cbindgen(
-    TARGET rust_ffi
+    TARGET egui_geode_rust_ffi
     HEADER_NAME egui_geode_rust.h
 )
 
@@ -34,7 +34,7 @@ target_sources(${PROJECT_NAME} INTERFACE cpp-src/hooks.cpp cpp-src/gl_util.cpp c
 target_include_directories(${PROJECT_NAME} INTERFACE include)
 
 if (ANDROID)
-    target_link_libraries(${PROJECT_NAME} INTERFACE rust_ffi EGL)
+    target_link_libraries(${PROJECT_NAME} INTERFACE egui_geode_rust_ffi EGL)
 else()
-    target_link_libraries(${PROJECT_NAME} INTERFACE rust_ffi)
+    target_link_libraries(${PROJECT_NAME} INTERFACE egui_geode_rust_ffi)
 endif()
