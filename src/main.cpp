@@ -1,4 +1,4 @@
-#include "rusty.h"
+#include "egui_geode_rust.h"
 #include "gl_util.hpp"
 using namespace geode::prelude;
 
