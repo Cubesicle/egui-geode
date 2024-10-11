@@ -10,7 +10,7 @@ pub struct GuiBackend {
     painter: Option<egui_glow::Painter>,
     modifiers: egui::Modifiers,
     events: Vec<egui::Event>,
-    checkbox_checked: bool,
+    run_fn: Option<Arc<Mutex<dyn FnMut(&egui::Context) + Send>>>,
 }
 
 impl Default for GuiBackend {
@@ -20,11 +20,12 @@ impl Default for GuiBackend {
 }
 
 impl GuiBackend {
-    pub fn init(&mut self, gl_ctx: Arc<egui_glow::glow::Context>) -> Result<()> {
+    pub fn init(&mut self, gl_ctx: Arc<egui_glow::glow::Context>, run_fn: Arc<Mutex<dyn FnMut(&egui::Context) + Send>>) -> Result<()> {
         ensure!(!self.initialized, GUI_ALREADY_INITIALIZED);
 
         self.painter = Some(egui_glow::Painter::new(gl_ctx, "", None, true).context(PAINTER_INITIALIZE_FAIL)?);
         self.egui_ctx = Some(egui::Context::default());
+        self.run_fn = Some(run_fn);
         self.initialized = true;
 
         Ok(())
@@ -50,16 +51,7 @@ impl GuiBackend {
             modifiers: self.modifiers,
             events: std::mem::take(&mut self.events),
             ..Default::default()
-        }, |ctx| {
-            egui::Window::new("Freak bot 😝").show(ctx, |ui| {
-                ui.label("it works!");
-                ui.label("it works!");
-                ui.label("it works!");
-                ui.label("it works!");
-                ui.label("it works!");
-                ui.checkbox(&mut self.checkbox_checked, "Freak mode");
-            });
-        });
+        }, |ctx| self.run_fn.as_ref().unwrap().lock().unwrap()(ctx));
         
         for (id, image_delta) in textures_delta.set {
             painter.set_texture(id, &image_delta);
@@ -158,7 +150,7 @@ impl GuiBackend {
                 command: false,
             },
             events: Vec::new(),
-            checkbox_checked: false,
+            run_fn: None,
         }
     }
 }

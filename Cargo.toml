@@ -4,8 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [lib]
-path = "rusty-src/lib.rs"
-crate-type = ["staticlib"]
+path = "rust-src/lib.rs"
 
 [dependencies]
 anyhow = "1.0"

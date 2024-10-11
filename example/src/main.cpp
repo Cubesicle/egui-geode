@@ -1,33 +1,17 @@
-#include <Geode/Geode.hpp>
-
+#include "rusty.h"
+#include "gl_util.hpp"
 using namespace geode::prelude;
 
-#include <Geode/modify/MenuLayer.hpp>
-class $modify(MyMenuLayer, MenuLayer) {
-	bool init() {
-		if (!MenuLayer::init()) {
-			return false;
-		}
+$on_mod(Loaded) {
+    init_context();
+    run_in_context([]() {
+        init_gui();
+    });
+}
 
-		log::debug("Hello from my MenuLayer::init hook! This layer has {} children.", this->getChildrenCount());
-
-		auto myButton = CCMenuItemSpriteExtra::create(
-			CCSprite::createWithSpriteFrameName("GJ_likeBtn_001.png"),
-			this,
-			menu_selector(MyMenuLayer::onMyButton)
-		);
-
-		auto menu = this->getChildByID("bottom-menu");
-		menu->addChild(myButton);
-
-		myButton->setID("my-button"_spr);
-
-		menu->updateLayout();
-
-		return true;
-	}
-
-	void onMyButton(CCObject*) {
-		FLAlertLayer::create("Geode", "Hello from my custom mod!", "OK")->show();
-	}
+#include <Geode/modify/PlayLayer.hpp>
+class $modify(PlayLayer) {
+    void startGame() {
+        bingus(getNonVirtual(this), getNonVirtual(&PlayLayer::startGame));
+    }
 };

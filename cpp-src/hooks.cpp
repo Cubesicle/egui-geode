@@ -4,16 +4,9 @@ using namespace geode::prelude;
 
 std::tuple<float, float> convert_cocos_point(CCPoint point);
 
-$on_mod(Loaded) {
-    init_context();
-    run_in_context([]() {
-        init_gui();
-    });
-}
-
 #include <Geode/modify/CCTouchDispatcher.hpp>
 class $modify(CCTouchDispatcher) {
-	void touches(CCSet *touches, CCEvent *event, unsigned int type) {
+    void touches(CCSet *touches, CCEvent *event, unsigned int type) {
         const auto touch = static_cast<CCTouch *>(touches->anyObject());
         const auto touch_pos = convert_cocos_point(touch->getLocation());
         if (gui_send_touch(touch->getID(), type, std::get<0>(touch_pos), std::get<1>(touch_pos))) {

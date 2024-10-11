@@ -1,18 +1,5 @@
-use std::{mem::transmute, sync::Arc};
 use anyhow::{Context, Error};
-use error_messages::MUTEX_LOCK_FAIL;
-use geode::{gl, log};
-
-mod error_messages;
-mod geode;
-mod gui;
-
-#[no_mangle]
-pub extern "C" fn init_gui() {
-    let _ = (|| gui::GLOBAL_GUI.lock().ok().context(MUTEX_LOCK_FAIL)?.init(
-        Arc::new(unsafe { egui_glow::glow::Context::from_loader_function(|s| gl::get_proc_address(s)) })
-    ))().map_err(print_err);
-}
+use egui_geode_rust::{error_messages::MUTEX_LOCK_FAIL, geode::log, gui};
 
 #[no_mangle]
 pub extern "C" fn swap_buffers_detour(frame_w: f32, frame_h: f32) {

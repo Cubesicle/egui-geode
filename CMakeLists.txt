@@ -17,18 +17,24 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(Corrosion)
 
 # Import targets defined in a package or workspace manifest `Cargo.toml` file
-corrosion_import_crate(MANIFEST_PATH Cargo.toml)
+corrosion_import_crate(MANIFEST_PATH rust-ffi/Cargo.toml)
 
 corrosion_experimental_cbindgen(
-    TARGET egui_geode_rust
+    TARGET rust_ffi
     HEADER_NAME egui_geode_rust.h
 )
 
 # Set up the mod binary
-add_library(${PROJECT_NAME} SHARED src/main.cpp src/gl_util.cpp src/ffi.cpp)
+add_library(${PROJECT_NAME} INTERFACE)
+
+set_target_properties(${PROJECT_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
+
+target_sources(${PROJECT_NAME} INTERFACE cpp-src/hooks.cpp cpp-src/gl_util.cpp cpp-src/ffi.cpp)
+
+target_include_directories(${PROJECT_NAME} INTERFACE include)
 
 if (ANDROID)
-    target_link_libraries(${PROJECT_NAME} egui_geode_rust EGL)
+    target_link_libraries(${PROJECT_NAME} INTERFACE rust_ffi EGL)
 else()
-    target_link_libraries(${PROJECT_NAME} egui_geode_rust)
+    target_link_libraries(${PROJECT_NAME} INTERFACE rust_ffi)
 endif()
