@@ -29,9 +29,7 @@ add_library(${PROJECT_NAME} SHARED
     # Add any extra C++ source files here
 )
 
-add_subdirectory(.. ${CMAKE_CURRENT_BINARY_DIR}/egui-geode)
-
-target_link_libraries(${PROJECT_NAME} EguiGeode rust_ffi)
+target_link_libraries(${PROJECT_NAME} rust_ffi)
 
 if (NOT DEFINED ENV{GEODE_SDK})
     message(FATAL_ERROR "Unable to find Geode SDK! Please define GEODE_SDK environment variable to point to Geode")

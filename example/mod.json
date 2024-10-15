@@ -7,8 +7,15 @@
         "ios": "2.206"
     },
     "id": "cubesicle.egui-geode-example",
-    "name": "Egui Geode Example",
+    "name": "egui Geode Example",
     "version": "v1.0.0",
     "developer": "Cubesicle",
-    "description": ""
+    "description": "",
+    "dependencies": [
+        {
+            "id": "cubesicle.egui-api",
+            "version": ">=v1.0.0",
+            "importance": "required"
+        }
+    ]
 }

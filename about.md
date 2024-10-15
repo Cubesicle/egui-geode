@@ -1,0 +1,2 @@
+# egui API
+[egui](https://github.com/emilk/egui) is an immediate mode GUI library for Rust. This API allows multiple mods to draw GUI overlays using egui while sharing one egui context, preventing mods from fighting over keyboard and mouse input and GUI rendering.

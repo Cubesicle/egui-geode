@@ -5,6 +5,7 @@ edition = "2021"
 
 [lib]
 path = "rust-src/lib.rs"
+crate-type = ["staticlib"]
 
 [dependencies]
 anyhow = "1.0"

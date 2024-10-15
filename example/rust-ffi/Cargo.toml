@@ -7,5 +7,4 @@ edition = "2021"
 crate-type = ["staticlib"]
 
 [dependencies]
-egui_geode_rust = { path = "../.." }
 egui = "0.29"

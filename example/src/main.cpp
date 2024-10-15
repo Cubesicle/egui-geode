@@ -1,12 +1,9 @@
+#include "cubesicle.egui-api/include/api.hpp"
 #include "rust_ffi.h"
-#include "gl_util.hpp"
 using namespace geode::prelude;
 
 $on_mod(Loaded) {
-    init_context();
-    run_in_context([]() {
-        init_gui();
-    });
+    egui_api::add_run_fn(run_fn);
 }
 
 #include <Geode/modify/PlayLayer.hpp>

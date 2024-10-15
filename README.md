@@ -1,5 +1,5 @@
 # egui-geode
-egui hook for geode woah
+egui for geode woah
 
 ## Build instructions
 on windows:
@@ -15,6 +15,8 @@ cd example
 
 ## Usage
 i forgor
+
+this library sucks atm so don't use it yet
 
 ## Todo
 - [ ] keyboard input

@@ -1,0 +1,22 @@
+{
+    "geode": "3.8.1",
+    "gd": {
+        "win": "2.206",
+        "android": "2.206",
+        "mac": "2.206",
+        "ios": "2.206"
+    },
+    "id": "cubesicle.egui-api",
+    "name": "egui API",
+    "version": "v1.0.0",
+    "developer": "Cubesicle",
+    "description": "egui rendering in Geometry Dash",
+    "links": {
+        "source": "https://github.com/Cubesicle/egui-geode"
+    },
+    "api": {
+        "include": [
+            "include/api.hpp"
+        ]
+    }
+}
