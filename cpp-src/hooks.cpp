@@ -12,6 +12,7 @@ class $modify(CCTouchDispatcher) {
         if (gui_send_touch(touch->getID(), type, std::get<0>(touch_pos), std::get<1>(touch_pos))) {
             touches->removeObject(touch);
         }
+        if (touches->count() == 0) return;
 
         CCTouchDispatcher::touches(touches, event, type);
     }
