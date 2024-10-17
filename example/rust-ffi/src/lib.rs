@@ -4,20 +4,19 @@ static mut INPUT_STRING: String = String::new();
 static mut CHECKBOX_CHECKED: bool = false;
 
 #[no_mangle]
-pub extern "C" fn run_fn(ctx: *const c_void) {
-    let ctx = unsafe { transmute::<_, &egui::Context>(ctx) };
-    egui::Window::new("Freak bot 😛").show(ctx, |ui| {
-        ui.label("it works!");
-        ui.label("it works!");
-        ui.label("it works!");
-        ui.label("it works!");
-        ui.label("it works!");
-        ui.checkbox(unsafe { &mut CHECKBOX_CHECKED }, "Freak mode");
-        ui.separator();
+pub extern "C" fn run_fn(ui: *const c_void) {
+    let ui = unsafe { transmute::<_, &mut egui::Ui>(ui) };
+    println!("{:?}", ui.ctx().input(|i| i.pointer.any_released()));
+    ui.label("it works!");
+    ui.label("it works!");
+    ui.label("it works!");
+    ui.label("it works!");
+    ui.label("it works!");
+    ui.checkbox(unsafe { &mut CHECKBOX_CHECKED }, "Freak mode");
+    ui.separator();
 
-        ui.label("freaky message:");
-        ui.text_edit_singleline(unsafe { &mut INPUT_STRING });
-    });
+    ui.label("freaky message:");
+    ui.text_edit_singleline(unsafe { &mut INPUT_STRING });
 }
 
 #[no_mangle]

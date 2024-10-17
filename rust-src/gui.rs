@@ -10,7 +10,7 @@ pub struct GuiBackend {
     painter: Option<egui_glow::Painter>,
     modifiers: egui::Modifiers,
     events: Vec<egui::Event>,
-    run_fns: Vec<fn(&egui::Context)>,
+    run_fns: Vec<fn(&mut egui::Ui)>,
 }
 
 impl Default for GuiBackend {
@@ -30,7 +30,7 @@ impl GuiBackend {
         Ok(())
     }
     
-    pub fn add_run_fn(&mut self, func: fn(&egui::Context)) -> Result<()> {
+    pub fn add_run_fn(&mut self, func: fn(&mut egui::Ui)) -> Result<()> {
         ensure!(self.initialized, GUI_NOT_INITIALIZED);
         
         self.run_fns.push(func);
@@ -59,7 +59,17 @@ impl GuiBackend {
             events: std::mem::take(&mut self.events),
             ..Default::default()
         }, |ctx| {
-            for f in &self.run_fns { f(ctx); }
+            egui::Window::new("fuck").show(ctx, |ui| {
+                ui.label("sdjfsdjsdfj");
+                ui.label("sdjfsdjsdfj");
+                ui.label("sdjfsdjsdfj");
+                ui.label("sdjfsdjsdfj");
+                ui.label("sdjfsdjsdfj");
+                ui.label("sdjfsdjsdfj");
+                ui.label("sdjfsdjsdfj");
+                ui.label("sdjfsdjsdfj");
+                for f in &self.run_fns { f(ui) };
+            });
         });
         
         for (id, image_delta) in textures_delta.set {
@@ -134,6 +144,7 @@ impl GuiBackend {
                 self.send_mouse_button(pos, Primary, true)?;
             },
             Move => {
+                #[cfg(target_os = "android")]
                 self.send_mouse_pos(pos)?;
             },
             End => {
@@ -143,6 +154,7 @@ impl GuiBackend {
             _ => (),
         };
         
+        #[cfg(target_os = "android")]
         self.events.push(egui::Event::Touch {
             device_id: egui::TouchDeviceId(0),
             id,

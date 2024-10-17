@@ -16,9 +16,10 @@ pub extern "C" fn init_gui() {
 
 #[no_mangle]
 pub extern "C" fn gui_add_run_fn(run_fn: extern "C" fn(*const c_void)) {
-    let _ = (|| gui::GLOBAL_GUI.lock().ok().context(MUTEX_LOCK_FAIL)?.add_run_fn(
-        unsafe { transmute::<_, fn(&egui::Context)>(run_fn) }
-    ))().map_err(|e| log::error(e.to_string()));
+    let _ = (|| {
+        let run_fn = run_fn;
+        gui::GLOBAL_GUI.lock().ok().context(MUTEX_LOCK_FAIL)?.add_run_fn(unsafe { transmute::<_, fn(&mut egui::Ui)>(run_fn) })
+    })().map_err(|e| log::error(e.to_string()));
 }
 
 #[no_mangle]
