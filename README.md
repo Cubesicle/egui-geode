@@ -19,6 +19,6 @@ i forgor
 this library sucks atm so don't use it yet
 
 ## Todo
-- [ ] keyboard input
+- [ ] android on-screen keyboard input
 - [ ] better mouse input
 - [ ] macos support

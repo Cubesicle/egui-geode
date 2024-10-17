@@ -81,6 +81,28 @@ impl GuiBackend {
         Ok(())
     }
     
+    pub fn wants_pointer_input(&self) -> Result<bool> {
+        Ok(self.egui_ctx.as_ref().context(GUI_NOT_INITIALIZED)?.wants_pointer_input())
+    }
+
+    pub fn wants_keyboard_input(&self) -> Result<bool> {
+        Ok(self.egui_ctx.as_ref().context(GUI_NOT_INITIALIZED)?.wants_keyboard_input())
+    }
+    
+    pub fn is_pos_over_area(&self, pos: egui::Pos2) -> Result<bool> {
+        let egui_ctx = self.egui_ctx.as_ref().context(GUI_NOT_INITIALIZED)?;
+
+        if let Some(layer) = egui_ctx.layer_id_at(pos) {
+            if layer.order == egui::Order::Background {
+                Ok(!egui_ctx.viewport(|v| v.this_pass.unused_rect.contains(pos)))
+            } else {
+                Ok(true)
+            }
+        } else {
+            Ok(false)
+        }
+    }
+    
     pub fn send_mouse_pos(&mut self, pos: egui::Pos2) -> Result<()> {
         ensure!(self.initialized, GUI_NOT_INITIALIZED);
 
@@ -89,9 +111,8 @@ impl GuiBackend {
         Ok(())
     }
     
-    pub fn send_mouse_button(&mut self, pos: egui::Pos2, button: egui::PointerButton, pressed: bool) -> Result<bool> {
-        let egui_ctx = self.egui_ctx.as_ref().context(GUI_NOT_INITIALIZED)?;
-        let should_block = pressed && egui_ctx.wants_pointer_input();
+    pub fn send_mouse_button(&mut self, pos: egui::Pos2, button: egui::PointerButton, pressed: bool) -> Result<()> {
+        ensure!(self.initialized, GUI_NOT_INITIALIZED);
         
         self.events.push(egui::Event::PointerButton {
             pos,
@@ -99,40 +120,39 @@ impl GuiBackend {
             pressed,
             modifiers: self.modifiers,
         });
-
-        Ok(should_block)
+        
+        Ok(())
     }
     
-    pub fn send_touch(&mut self, id: egui::TouchId, phase: egui::TouchPhase, pos: egui::Pos2) -> Result<bool> {
+    pub fn send_scroll_event(&mut self, delta: egui::Vec2) -> Result<()> {
+        ensure!(self.initialized, GUI_NOT_INITIALIZED);
+        
+        self.events.push(egui::Event::MouseWheel {
+            unit: egui::MouseWheelUnit::Point,
+            delta,
+            modifiers: self.modifiers,
+        });
+
+        Ok(())
+    }
+    
+    pub fn send_touch(&mut self, id: egui::TouchId, phase: egui::TouchPhase, pos: egui::Pos2) -> Result<()> {
         ensure!(self.initialized, GUI_NOT_INITIALIZED);
         
         use egui::TouchPhase::{Start, Move, End};
         use egui::PointerButton::Primary;
-        let should_block = match phase {
+        match phase {
             Start => {
                 self.send_mouse_button(pos, Primary, true)?;
-
-                let egui_ctx = self.egui_ctx.as_ref().context(GUI_NOT_INITIALIZED)?;
-                if let Some(layer) = egui_ctx.layer_id_at(pos) {
-                    if layer.order == egui::Order::Background {
-                        !egui_ctx.viewport(|v| v.this_pass.unused_rect.contains(pos))
-                    } else {
-                        true
-                    }
-                } else {
-                    false
-                }
             },
             Move => {
                 self.send_mouse_pos(pos)?;
-                false
             },
             End => {
                 self.send_mouse_button(pos, Primary, false)?;
                 self.events.push(egui::Event::PointerGone);
-                false
             },
-            _ => false,
+            _ => (),
         };
         
         self.events.push(egui::Event::Touch {
@@ -142,8 +162,38 @@ impl GuiBackend {
             pos,
             force: None,
         });
+        
+        Ok(())
+    }
+    
+    pub fn send_key_press(&mut self, key: egui::Key, pressed: bool, repeat: bool) -> Result<()> {
+        ensure!(self.initialized, GUI_NOT_INITIALIZED);
 
-        Ok(should_block)
+        self.events.push(egui::Event::Key {
+            key,
+            physical_key: Some(key),
+            pressed,
+            repeat,
+            modifiers: self.modifiers,
+        });
+
+        Ok(())
+    }
+    
+    pub fn send_text_input(&mut self, text: &str) -> Result<()> {
+        ensure!(self.initialized, GUI_NOT_INITIALIZED);
+
+        self.events.push(egui::Event::Text(text.to_string()));
+
+        Ok(())
+    }
+    
+    pub fn send_modifiers(&mut self, modifiers: egui::Modifiers) -> Result<()> {
+        ensure!(self.initialized, GUI_NOT_INITIALIZED);
+
+        self.modifiers = modifiers;
+
+        Ok(())
     }
 
     const fn new() -> Self {

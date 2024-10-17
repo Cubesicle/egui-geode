@@ -7,16 +7,17 @@ static mut CHECKBOX_CHECKED: bool = false;
 pub extern "C" fn run_fn(ctx: *const c_void) {
     let ctx = unsafe { transmute::<_, &egui::Context>(ctx) };
     egui::Window::new("Freak bot 😛").show(ctx, |ui| {
-        ui.label("it works!");
-        ui.label("it works!");
-        ui.label("it works!");
-        ui.label("it works!");
-        ui.label("it works!");
-        ui.checkbox(unsafe { &mut CHECKBOX_CHECKED }, "Freak mode");
-        ui.separator();
+        egui::ScrollArea::both().show(ui, |ui| {
+            ui.style_mut().wrap_mode = Some(egui::TextWrapMode::Extend);
+            for _ in 0..50 {
+                ui.label("it works! ".repeat(25));
+            }
+            ui.checkbox(unsafe { &mut CHECKBOX_CHECKED }, "Freak mode");
+            ui.separator();
 
-        ui.label("freaky message:");
-        ui.text_edit_singleline(unsafe { &mut INPUT_STRING });
+            ui.label("freaky message:");
+            ui.text_edit_singleline(unsafe { &mut INPUT_STRING });
+        });
     });
 }
 
