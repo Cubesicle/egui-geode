@@ -9,6 +9,6 @@
 #endif
     
 static GLContext new_context;
-extern "C" const void *gl_get_proc_address(const char *str);
+const uintptr_t gl_get_proc_address(const char *str);
 void init_context();
 void run_in_context(std::function<void()> const &fn);

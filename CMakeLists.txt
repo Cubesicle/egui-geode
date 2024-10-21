@@ -19,9 +19,9 @@ FetchContent_MakeAvailable(Corrosion)
 # Import targets defined in a package or workspace manifest `Cargo.toml` file
 corrosion_import_crate(MANIFEST_PATH Cargo.toml)
 
-corrosion_experimental_cbindgen(
-    TARGET egui_geode_rust
-    HEADER_NAME egui_geode_rust.h
+corrosion_add_cxxbridge(egui_geode_rust_ffi
+    CRATE egui_geode_rust
+    FILES rust-src/gd.rs
 )
 
 add_library(${PROJECT_NAME} SHARED

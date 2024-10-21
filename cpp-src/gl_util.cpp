@@ -1,10 +1,10 @@
 #include "gl_util.hpp"
 
 #ifdef GEODE_IS_WINDOWS
-    extern "C" const void *gl_get_proc_address(const char *str) {
+    const uintptr_t gl_get_proc_address(const char *str) {
         auto fn = wglGetProcAddress(str);
         if (fn == NULL) fn = GetProcAddress(GetModuleHandleA("opengl32.dll"), str);
-        return reinterpret_cast<const void *>(fn);
+        return reinterpret_cast<uintptr_t>(fn);
     }
 
     void init_context() {
@@ -18,7 +18,7 @@
         wglMakeCurrent(wglGetCurrentDC(), old_ctx);
     }
 #else
-    extern "C" const void *gl_get_proc_address(const char *str) {
+    const uintptr_t gl_get_proc_address(const char *str) {
         return reinterpret_cast<const void *>(eglGetProcAddress(str));
     }
 

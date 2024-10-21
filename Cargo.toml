@@ -9,8 +9,9 @@ crate-type = ["staticlib"]
 
 [dependencies]
 anyhow = "1.0"
+cxx = "1.0"
 egui = "0.29"
 egui_glow = "0.29"
 
 [build-dependencies]
-bindgen = "0.70"
+cxx-build = "1.0"
