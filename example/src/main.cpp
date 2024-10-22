@@ -1,5 +1,5 @@
 #include "cubesicle.egui-api/include/api.hpp"
-#include "rust_ffi.h"
+#include "rust-ffi.h"
 using namespace geode::prelude;
 
 $on_mod(Loaded) {

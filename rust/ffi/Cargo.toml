@@ -1,0 +1,15 @@
+[package]
+name = "ffi"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["staticlib"]
+
+[dependencies]
+anyhow = "1.0"
+egui-geode = { path = "../.." }
+egui_glow = "0.29"
+
+[build-dependencies]
+bindgen = "0.70"

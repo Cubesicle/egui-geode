@@ -3,7 +3,7 @@ use std::path::PathBuf;
 
 fn main() {
     let bindings = bindgen::Builder::default()
-        .header("include/ffi.h")
+        .header("../../include/ffi.h")
         .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
         .generate()
         .expect("Unable to generate bindings");

@@ -1,11 +1,10 @@
 use std::{ffi::{c_char, c_void, CStr}, mem::transmute, sync::Arc};
 use anyhow::{Context, Error};
-use error_messages::MUTEX_LOCK_FAIL;
-use gd::{gl, log};
+use egui_geode::{egui, errors::MUTEX_LOCK_FAIL, gui};
 
-mod error_messages;
-mod gd;
-mod gui;
+mod bindings;
+mod gl;
+mod log;
 
 #[no_mangle]
 pub extern "C" fn init_gui() {

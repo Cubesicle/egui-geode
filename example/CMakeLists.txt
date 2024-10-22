@@ -11,17 +11,19 @@ include(FetchContent)
 
 FetchContent_Declare(
     Corrosion
-    GIT_REPOSITORY https://github.com/corrosion-rs/corrosion.git
-    GIT_TAG v0.5 # Optionally specify a commit hash, version tag or branch here
+    GIT_REPOSITORY https://github.com/jschwe/corrosion.git
+    GIT_TAG 0a2758a9324ce2d41f7ec45cc4b48b4bbe8fc376 # Optionally specify a commit hash, version tag or branch here
 )
 FetchContent_MakeAvailable(Corrosion)
 
 # Import targets defined in a package or workspace manifest `Cargo.toml` file
-corrosion_import_crate(MANIFEST_PATH rust-ffi/Cargo.toml)
+corrosion_import_crate(MANIFEST_PATH ../Cargo.toml CRATES exampleffi)
+
+corrosion_add_target_rustflags(exampleffi "$ENV{RUSTFLAGS} -Zstaticlib-allow-rdylib-deps=y -Zstaticlib-prefer-dynamic=y")
 
 corrosion_experimental_cbindgen(
-    TARGET rust_ffi
-    HEADER_NAME rust_ffi.h
+    TARGET exampleffi
+    HEADER_NAME rust-ffi.h
 )
 
 add_library(${PROJECT_NAME} SHARED
@@ -29,7 +31,7 @@ add_library(${PROJECT_NAME} SHARED
     # Add any extra C++ source files here
 )
 
-target_link_libraries(${PROJECT_NAME} rust_ffi)
+target_link_libraries(${PROJECT_NAME} exampleffi)
 
 if (NOT DEFINED ENV{GEODE_SDK})
     message(FATAL_ERROR "Unable to find Geode SDK! Please define GEODE_SDK environment variable to point to Geode")

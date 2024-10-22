@@ -1,5 +1,5 @@
 [package]
-name = "rust_ffi"
+name = "exampleffi"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,4 +7,4 @@ edition = "2021"
 crate-type = ["staticlib"]
 
 [dependencies]
-egui = "0.29"
+egui-geode = { path = "../.." }

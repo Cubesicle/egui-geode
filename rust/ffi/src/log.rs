@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use std::ffi::CString;
 use super::bindings::{log_debug, log_info, log_warn, log_error};
 

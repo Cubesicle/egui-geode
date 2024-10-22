@@ -11,29 +11,33 @@ include(FetchContent)
 
 FetchContent_Declare(
     Corrosion
-    GIT_REPOSITORY https://github.com/corrosion-rs/corrosion.git
-    GIT_TAG v0.5 # Optionally specify a commit hash, version tag or branch here
+    GIT_REPOSITORY https://github.com/jschwe/corrosion.git
+    GIT_TAG 0a2758a9324ce2d41f7ec45cc4b48b4bbe8fc376
 )
 FetchContent_MakeAvailable(Corrosion)
 
-# Import targets defined in a package or workspace manifest `Cargo.toml` file
-corrosion_import_crate(MANIFEST_PATH Cargo.toml)
+corrosion_import_crate(
+    MANIFEST_PATH Cargo.toml
+    CRATES ffi
+)
+
+corrosion_add_target_rustflags(ffi "$ENV{RUSTFLAGS} -Zstaticlib-allow-rdylib-deps=y -Zstaticlib-prefer-dynamic=y")
 
 corrosion_experimental_cbindgen(
-    TARGET egui_geode_rust
-    HEADER_NAME egui_geode_rust.h
+    TARGET ffi
+    HEADER_NAME egui-geode.h
 )
 
 add_library(${PROJECT_NAME} SHARED
-    cpp-src/main.cpp
-    cpp-src/api.cpp
-    cpp-src/gl_util.cpp
-    cpp-src/ffi.cpp
+    src/main.cpp
+    src/api.cpp
+    src/gl-util.cpp
+    src/ffi.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE include)
 
-target_link_libraries(${PROJECT_NAME} egui_geode_rust)
+target_link_libraries(${PROJECT_NAME} ffi)
 if (ANDROID)
     target_link_libraries(${PROJECT_NAME} EGL)
 endif()

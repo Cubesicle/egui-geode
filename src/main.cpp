@@ -1,5 +1,5 @@
-#include "egui_geode_rust.h"
-#include "gl_util.hpp"
+#include "egui-geode.h"
+#include "gl-util.hpp"
 using namespace geode::prelude;
 
 struct EguiPos2 {

@@ -1,4 +1,7 @@
+#![allow(static_mut_refs)]
+
 use std::{ffi::c_void, mem::transmute};
+use egui_geode::egui;
 
 static mut INPUT_STRING: String = String::new();
 static mut CHECKBOX_CHECKED: bool = false;

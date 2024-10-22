@@ -1,4 +1,4 @@
-#include "gl_util.hpp"
+#include "gl-util.hpp"
 
 #ifdef GEODE_IS_WINDOWS
     extern "C" const void *gl_get_proc_address(const char *str) {
