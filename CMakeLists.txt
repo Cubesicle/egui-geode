@@ -17,10 +17,12 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(Corrosion)
 
 # Import targets defined in a package or workspace manifest `Cargo.toml` file
-corrosion_import_crate(MANIFEST_PATH Cargo.toml)
+corrosion_import_crate(MANIFEST_PATH rust-ffi/Cargo.toml)
+
+corrosion_add_target_local_rustflags(egui_geode_ffi "-Cprefer-dynamic")
 
 corrosion_experimental_cbindgen(
-    TARGET egui_geode_rust
+    TARGET egui_geode_ffi
     HEADER_NAME egui_geode_rust.h
 )
 
@@ -33,7 +35,7 @@ add_library(${PROJECT_NAME} SHARED
 
 target_include_directories(${PROJECT_NAME} PRIVATE include)
 
-target_link_libraries(${PROJECT_NAME} egui_geode_rust)
+target_link_libraries(${PROJECT_NAME} egui_geode_ffi)
 if (ANDROID)
     target_link_libraries(${PROJECT_NAME} EGL)
 endif()

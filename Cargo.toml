@@ -1,16 +1,18 @@
 [package]
-name = "egui_geode_rust"
+name = "egui_geode"
 version = "0.1.0"
 edition = "2021"
 
 [lib]
 path = "rust-src/lib.rs"
-crate-type = ["staticlib"]
 
 [dependencies]
 anyhow = "1.0"
 egui = "0.29"
 egui_glow = "0.29"
 
-[build-dependencies]
-bindgen = "0.70"
+[workspace]
+members = [
+    "rust-ffi",
+    "example/rust-ffi",
+]
