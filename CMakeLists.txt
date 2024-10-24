@@ -11,8 +11,8 @@ include(FetchContent)
 
 FetchContent_Declare(
     Corrosion
-    GIT_REPOSITORY https://github.com/jschwe/corrosion.git
-    GIT_TAG 0a2758a9324ce2d41f7ec45cc4b48b4bbe8fc376
+    GIT_REPOSITORY https://github.com/corrosion-rs/corrosion.git
+    GIT_TAG v0.5
 )
 FetchContent_MakeAvailable(Corrosion)
 
@@ -21,7 +21,7 @@ corrosion_import_crate(
     CRATES ffi
 )
 
-corrosion_add_target_rustflags(ffi "$ENV{RUSTFLAGS} -Zstaticlib-allow-rdylib-deps=y -Zstaticlib-prefer-dynamic=y")
+corrosion_add_target_rustflags(ffi "$ENV{RUSTFLAGS} -lstatic:+whole-archive=egui-geode")
 
 corrosion_experimental_cbindgen(
     TARGET ffi
@@ -37,7 +37,8 @@ add_library(${PROJECT_NAME} SHARED
 
 target_include_directories(${PROJECT_NAME} PRIVATE include)
 
-target_link_libraries(${PROJECT_NAME} ffi)
+#target_link_libraries(${PROJECT_NAME} ffi)
+target_link_libraries(${PROJECT_NAME} "$<LINK_LIBRARY:WHOLE_ARCHIVE,ffi>")
 if (ANDROID)
     target_link_libraries(${PROJECT_NAME} EGL)
 endif()
