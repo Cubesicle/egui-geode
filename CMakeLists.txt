@@ -21,6 +21,8 @@ corrosion_import_crate(
     CRATES ffi
 )
 
+corrosion_add_target_rustflags(ffi "$ENV{RUSTFLAGS} -Clink-args=/wholearchive")
+
 corrosion_experimental_cbindgen(
     TARGET ffi
     HEADER_NAME egui-geode.h
