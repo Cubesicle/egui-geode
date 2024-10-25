@@ -21,8 +21,6 @@ corrosion_import_crate(
     CRATES ffi
 )
 
-corrosion_add_target_rustflags(ffi "$ENV{RUSTFLAGS} -lstatic:+whole-archive=egui-geode")
-
 corrosion_experimental_cbindgen(
     TARGET ffi
     HEADER_NAME egui-geode.h
@@ -37,8 +35,8 @@ add_library(${PROJECT_NAME} SHARED
 
 target_include_directories(${PROJECT_NAME} PRIVATE include)
 
-#target_link_libraries(${PROJECT_NAME} ffi)
-target_link_libraries(${PROJECT_NAME} "$<LINK_LIBRARY:WHOLE_ARCHIVE,ffi>")
+target_link_options(${PROJECT_NAME} PRIVATE "/wholearchive:ffi.lib")
+target_link_libraries(${PROJECT_NAME} ffi)
 if (ANDROID)
     target_link_libraries(${PROJECT_NAME} EGL)
 endif()
