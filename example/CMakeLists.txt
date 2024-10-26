@@ -17,9 +17,13 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(Corrosion)
 
 # Import targets defined in a package or workspace manifest `Cargo.toml` file
-corrosion_import_crate(MANIFEST_PATH ../Cargo.toml CRATES exampleffi)
+corrosion_import_crate(
+    MANIFEST_PATH ../Cargo.toml
+    CRATES exampleffi
+)
 
-corrosion_add_target_rustflags(exampleffi "$ENV{RUSTFLAGS} -Zstaticlib-allow-rdylib-deps=y -Zstaticlib-prefer-dynamic=y")
+#corrosion_add_target_rustflags(exampleffi "$ENV{RUSTFLAGS} -Csymbol-mangling-version=v0 -Zstaticlib-allow-rdylib-deps=y -Zstaticlib-prefer-dynamic=y --print native-static-libs")
+corrosion_add_target_rustflags(exampleffi "$ENV{RUSTFLAGS} -Csymbol-mangling-version=v0")
 
 corrosion_experimental_cbindgen(
     TARGET exampleffi

@@ -21,7 +21,7 @@ corrosion_import_crate(
     CRATES ffi
 )
 
-corrosion_add_target_rustflags(ffi "$ENV{RUSTFLAGS} -Clink-args=/wholearchive")
+corrosion_add_target_rustflags(ffi "$ENV{RUSTFLAGS} -Csymbol-mangling-version=v0")
 
 corrosion_experimental_cbindgen(
     TARGET ffi
@@ -37,7 +37,7 @@ add_library(${PROJECT_NAME} SHARED
 
 target_include_directories(${PROJECT_NAME} PRIVATE include)
 
-target_link_options(${PROJECT_NAME} PRIVATE "/wholearchive:ffi.lib")
+target_link_options(${PROJECT_NAME} PRIVATE "/wholearchive:ffi")
 target_link_libraries(${PROJECT_NAME} ffi)
 if (ANDROID)
     target_link_libraries(${PROJECT_NAME} EGL)
