@@ -1,6 +1,6 @@
 use std::{sync::{Arc, Mutex}, time::SystemTime};
 use anyhow::{ensure, Context, Result};
-use crate::error_messages::{GUI_ALREADY_INITIALIZED, GUI_NOT_INITIALIZED, PAINTER_INITIALIZE_FAIL};
+use crate::errors::{GUI_ALREADY_INITIALIZED, GUI_NOT_INITIALIZED, PAINTER_INITIALIZE_FAIL};
 
 pub static GLOBAL_GUI: Mutex<GuiBackend> = Mutex::new(GuiBackend::new());
 

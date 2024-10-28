@@ -17,17 +17,20 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(Corrosion)
 
 # Import targets defined in a package or workspace manifest `Cargo.toml` file
-corrosion_import_crate(MANIFEST_PATH Cargo.toml)
+corrosion_import_crate(
+    MANIFEST_PATH Cargo.toml
+    CRATES egui-geode-rust
+)
 
 corrosion_experimental_cbindgen(
     TARGET egui_geode_rust
-    HEADER_NAME egui_geode_rust.h
+    HEADER_NAME egui-geode-rust.h
 )
 
 add_library(${PROJECT_NAME} SHARED
     cpp-src/main.cpp
     cpp-src/api.cpp
-    cpp-src/gl_util.cpp
+    cpp-src/gl-util.cpp
     cpp-src/ffi.cpp
 )
 

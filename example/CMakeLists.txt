@@ -17,11 +17,14 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(Corrosion)
 
 # Import targets defined in a package or workspace manifest `Cargo.toml` file
-corrosion_import_crate(MANIFEST_PATH rust-ffi/Cargo.toml)
+corrosion_import_crate(
+    MANIFEST_PATH ../Cargo.toml
+    CRATES rust-ffi
+)
 
 corrosion_experimental_cbindgen(
     TARGET rust_ffi
-    HEADER_NAME rust_ffi.h
+    HEADER_NAME rust-ffi.h
 )
 
 add_library(${PROJECT_NAME} SHARED

@@ -1,5 +1,5 @@
 [package]
-name = "egui_geode_rust"
+name = "egui-geode-rust"
 version = "0.1.0"
 edition = "2021"
 
@@ -14,3 +14,7 @@ egui_glow = "0.29"
 
 [build-dependencies]
 bindgen = "0.70"
+
+[workspace]
+members = ["example/rust-ffi"]
+resolver = "2"

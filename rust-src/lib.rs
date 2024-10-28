@@ -1,9 +1,9 @@
 use std::{ffi::{c_char, c_void, CStr}, mem::transmute, sync::Arc};
 use anyhow::{Context, Error};
-use error_messages::MUTEX_LOCK_FAIL;
+use errors::MUTEX_LOCK_FAIL;
 use gd::{gl, log};
 
-mod error_messages;
+mod errors;
 mod gd;
 mod gui;
 

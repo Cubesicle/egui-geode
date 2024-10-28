@@ -1,3 +1,5 @@
+#![allow(static_mut_refs)]
+
 use std::{ffi::c_void, mem::transmute};
 
 static mut INPUT_STRING: String = String::new();
@@ -8,9 +10,19 @@ pub extern "C" fn run_fn(ctx: *const c_void) {
     let ctx = unsafe { transmute::<_, &egui::Context>(ctx) };
     egui::Window::new("Freak bot 😛").show(ctx, |ui| {
         egui::ScrollArea::both().show(ui, |ui| {
-            ui.style_mut().wrap_mode = Some(egui::TextWrapMode::Extend);
-            for _ in 0..50 {
-                ui.label("it works! ".repeat(25));
+            ///////////////////////////////////////////////////////////////////////
+            // IMPORTANT!!! Disabling selectable labels fixes a weird bug where  //
+            // the selected text gets stuck on the cursor and it randomly causes //
+            // frames to drop!!!!! Disable it!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  //
+            // It has something to do with inconsistent TypeIds across builds,   //
+            // and I have no idea how to fix it. I literally tried everything    //
+            // like dynamic linking and shit and I almost went insane. This is a //
+            // temporary fix for now.                                            //
+            ui.style_mut().interaction.selectable_labels = false;                //
+            ///////////////////////////////////////////////////////////////////////
+
+            for _ in 0..5 {
+                ui.label("it works!");
             }
             ui.checkbox(unsafe { &mut CHECKBOX_CHECKED }, "Freak mode");
             ui.separator();
