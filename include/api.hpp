@@ -11,5 +11,6 @@
 #endif
 
 namespace egui_api {
+    EGUI_API_DLL void context(void (*reader)(const void *ctx));
     EGUI_API_DLL void add_run_fn(void (*run_fn)(const void *ctx));
 }

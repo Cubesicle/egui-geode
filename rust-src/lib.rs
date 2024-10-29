@@ -15,6 +15,15 @@ pub extern "C" fn init_gui() {
 }
 
 #[no_mangle]
+pub extern "C" fn gui_context(reader: extern "C" fn(*const c_void)) {
+    let _ = (|| {
+        let gui = gui::GLOBAL_GUI.lock().ok().context(MUTEX_LOCK_FAIL)?;
+        let ctx = gui.get_context()?;
+        Ok(unsafe { transmute::<_, *const c_void>(ctx) })
+    })().and_then(|ctx| Ok(reader(ctx))).map_err(print_err);
+}
+
+#[no_mangle]
 pub extern "C" fn gui_add_run_fn(run_fn: extern "C" fn(*const c_void)) {
     let _ = (|| gui::GLOBAL_GUI.lock().ok().context(MUTEX_LOCK_FAIL)?.add_run_fn(
         unsafe { transmute::<_, fn(&egui::Context)>(run_fn) }

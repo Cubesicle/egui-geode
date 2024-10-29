@@ -30,6 +30,10 @@ impl GuiBackend {
         Ok(())
     }
     
+    pub fn get_context(&self) -> Result<&egui::Context> {
+        self.egui_ctx.as_ref().context(GUI_NOT_INITIALIZED)
+    }
+    
     pub fn add_run_fn(&mut self, func: fn(&egui::Context)) -> Result<()> {
         ensure!(self.initialized, GUI_NOT_INITIALIZED);
         
