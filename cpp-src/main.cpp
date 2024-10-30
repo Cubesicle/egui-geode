@@ -65,17 +65,19 @@ class $modify(CCIMEDispatcher) {
     }
 };
 
-#include <Geode/modify/CCTouchDispatcher.hpp>
-class $modify(CCTouchDispatcher) {
-    void touches(CCSet *touches, CCEvent *event, unsigned int type) {
-        const auto touch = static_cast<CCTouch *>(touches->anyObject());
-        const auto touch_pos = convert_cocos_point(touch->getLocation());
-        gui_send_touch(touch->getID(), type, touch_pos.x, touch_pos.y);
-        if (type == CCTOUCHBEGAN && is_pos_over_gui_area(touch_pos.x, touch_pos.y)) return;
-
-        CCTouchDispatcher::touches(touches, event, type);
-    }
-};
+#ifndef GEODE_IS_DESKTOP
+    #include <Geode/modify/CCTouchDispatcher.hpp>
+    class $modify(CCTouchDispatcher) {
+        void touches(CCSet *touches, CCEvent *event, unsigned int type) {
+            const auto touch = static_cast<CCTouch *>(touches->anyObject());
+            const auto touch_pos = convert_cocos_point(touch->getLocation());
+            gui_send_touch(touch->getID(), type, touch_pos.x, touch_pos.y);
+            if (type == CCTOUCHBEGAN && is_pos_over_gui_area(touch_pos.x, touch_pos.y)) return;
+    
+            CCTouchDispatcher::touches(touches, event, type);
+        }
+    };
+#endif
 
 #include <Geode/modify/CCMouseDispatcher.hpp>
 class $modify(CCMouseDispatcher) {
@@ -89,6 +91,16 @@ class $modify(CCMouseDispatcher) {
 
 #include <Geode/modify/CCEGLView.hpp>
 class $modify(CCEGLView) {
+    #ifdef GEODE_IS_DESKTOP
+        void onGLFWMouseCallBack(GLFWwindow* window, int button, int action, int mods) {
+            const auto mouse_pos = convert_cocos_point(cocos::getMousePos());
+            gui_send_mouse_button(mouse_pos.x, mouse_pos.y, button, action);
+            if (action == GLFW_PRESS && gui_wants_pointer_input()) return;
+
+            CCEGLView::onGLFWMouseCallBack(window, button, action, mods);
+        }
+    #endif
+
     void swapBuffers() {
         #ifdef GEODE_IS_DESKTOP
             const auto mouse_pos = convert_cocos_point(cocos::getMousePos());

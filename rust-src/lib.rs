@@ -65,12 +65,21 @@ pub extern "C" fn gui_send_mouse_pos(mouse_x: f32, mouse_y: f32) {
     ))().map_err(print_err);
 }
 
-//#[no_mangle]
-//pub extern "C" fn gui_send_mouse_button(mouse_x: f32, mouse_y: f32, button: u32, pressed: bool) {
-//    let _ = (|| gui::GLOBAL_GUI.lock().ok().context(MUTEX_LOCK_FAIL)?.send_mouse_button(
-//        egui::pos2(mouse_x, mouse_y)
-//    ))().map_err(print_err);
-//}
+#[no_mangle]
+pub extern "C" fn gui_send_mouse_button(mouse_x: f32, mouse_y: f32, button: u32, pressed: bool) {
+    let _ = (|| gui::GLOBAL_GUI.lock().ok().context(MUTEX_LOCK_FAIL)?.send_mouse_button(
+        egui::pos2(mouse_x, mouse_y),
+        match button {
+            0 => egui::PointerButton::Primary,
+            1 => egui::PointerButton::Secondary,
+            2 => egui::PointerButton::Middle,
+            3 => egui::PointerButton::Extra1,
+            4 => egui::PointerButton::Extra2,
+            _ => egui::PointerButton::Primary,
+        },
+        pressed
+    ))().map_err(print_err);
+}
 
 #[no_mangle]
 pub extern "C" fn gui_send_scroll_event(delta_x: f32, delta_y: f32) {
