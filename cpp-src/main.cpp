@@ -11,6 +11,10 @@ bool key_is_modifier(enumKeyCodes key);
 bool key_is_controller(enumKeyCodes key);
 EguiPos2 convert_cocos_point(const CCPoint &point);
 
+#ifndef GEODE_IS_DESKTOP
+    bool keyboard_is_showing = false;
+#endif
+
 $on_mod(Loaded) {
     init_context();
     run_in_context([]() {
@@ -50,19 +54,25 @@ class $modify(CCIMEDispatcher) {
         }
     }
 
-    void dispatchDeleteBackward() {
-        gui_send_key_press("Backspace", true, false);
-        gui_send_key_press("Backspace", false, false);
+    #ifndef GEODE_IS_DESKTOP
+        void dispatchDeleteBackward() {
+            if (gui_wants_keyboard_input()) {
+                gui_send_key_press("Backspace", true, false);
+                gui_send_key_press("Backspace", false, false);
+            } else {
+                CCIMEDispatcher::dispatchDeleteBackward();
+            }
+        }
 
-        CCIMEDispatcher::dispatchDeleteBackward();
-    }
-
-    void dispatchDeleteForward() {
-        gui_send_key_press("Delete", true, false);
-        gui_send_key_press("Delete", false, false);
-
-        CCIMEDispatcher::dispatchDeleteForward();
-    }
+        void dispatchDeleteForward() {
+            if (gui_wants_keyboard_input()) {
+                gui_send_key_press("Delete", true, false);
+                gui_send_key_press("Delete", false, false);
+            } else {
+                CCIMEDispatcher::dispatchDeleteForward();
+            }
+        }
+    #endif
 };
 
 #ifndef GEODE_IS_DESKTOP
@@ -105,6 +115,11 @@ class $modify(CCEGLView) {
         #ifdef GEODE_IS_DESKTOP
             const auto mouse_pos = convert_cocos_point(cocos::getMousePos());
             gui_send_mouse_pos(mouse_pos.x, mouse_pos.y);
+        #else
+            if (keyboard_is_showing != gui_wants_keyboard_input()) {
+                CCEGLView::setIMEKeyboardState(gui_wants_keyboard_input());
+                keyboard_is_showing = gui_wants_keyboard_input();
+            }
         #endif
 
         const auto frame_size = getFrameSize();
