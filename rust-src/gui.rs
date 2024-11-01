@@ -71,13 +71,15 @@ impl GuiBackend {
             painter.set_texture(id, &image_delta);
         }
     
-        let clipped_primitives = egui_ctx.tessellate(shapes, pixels_per_point);
+        if !shapes.is_empty() {
+            let clipped_primitives = egui_ctx.tessellate(shapes, pixels_per_point);
     
-        painter.paint_primitives(
-            [frame_size.0 as u32, frame_size.1 as u32],
-            egui_ctx.pixels_per_point(),
-            &clipped_primitives,
-        );
+            painter.paint_primitives(
+                [frame_size.0 as u32, frame_size.1 as u32],
+                egui_ctx.pixels_per_point(),
+                &clipped_primitives,
+            );
+        }
     
         for id in textures_delta.free.drain(..) {
             painter.free_texture(id);
