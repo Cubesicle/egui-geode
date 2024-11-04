@@ -102,7 +102,7 @@ class $modify(CCMouseDispatcher) {
 #include <Geode/modify/CCEGLView.hpp>
 class $modify(CCEGLView) {
     #ifdef GEODE_IS_DESKTOP
-        void onGLFWMouseCallBack(GLFWwindow* window, int button, int action, int mods) {
+        void onGLFWMouseCallBack(GLFWwindow *window, int button, int action, int mods) {
             const auto mouse_pos = convert_cocos_point(cocos::getMousePos());
             gui_send_mouse_button(mouse_pos.x, mouse_pos.y, button, action);
             if (action == GLFW_PRESS && gui_wants_pointer_input()) return;
