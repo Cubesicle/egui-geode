@@ -24,6 +24,10 @@ $on_mod(Loaded) {
 
 #include <Geode/modify/CCKeyboardDispatcher.hpp>
 class $modify(CCKeyboardDispatcher) {
+    static void onModify(auto &self) {
+        (void) self.setHookPriority("cocos2d::CCKeyboardDispatcher::updateModifierKeys", -1);
+    }
+
     void updateModifierKeys(bool shift, bool ctrl, bool alt, bool cmd) {
         #ifdef GEODE_IS_MACOS
             gui_send_modifiers(shift, ctrl, alt, cmd, cmd);
