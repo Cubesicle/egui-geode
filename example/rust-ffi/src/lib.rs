@@ -6,6 +6,12 @@ static mut INPUT_STRING: String = String::new();
 static mut CHECKBOX_CHECKED: bool = false;
 
 #[no_mangle]
+pub extern "C" fn setup(ctx: *const c_void) {
+    let ctx = unsafe { transmute::<_, &egui::Context>(ctx) };
+    ctx.set_theme(egui::Theme::Light);
+}
+
+#[no_mangle]
 pub extern "C" fn run_fn(ctx: *const c_void) {
     let ctx = unsafe { transmute::<_, &egui::Context>(ctx) };
     egui::Window::new("Freak bot 😛").show(ctx, |ui| {

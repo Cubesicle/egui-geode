@@ -3,6 +3,7 @@
 using namespace geode::prelude;
 
 $on_mod(Loaded) {
+    egui_api::context(setup);
     egui_api::add_run_fn(run_fn);
 }
 
