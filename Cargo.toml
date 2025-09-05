@@ -1,20 +1,16 @@
 [package]
-name = "egui-geode-rust"
+name = "egui-geode"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 [lib]
 path = "rust-src/lib.rs"
-crate-type = ["staticlib"]
 
 [dependencies]
 egui = "0.29"
 egui_glow = "0.29"
 parking_lot = "0.12"
 
-[build-dependencies]
-bindgen = "0.70"
-
-# [workspace]
-# members = ["example/rust-ffi"]
-# resolver = "2"
+[workspace]
+members = ["rust-ffi"]
+resolver = "2"

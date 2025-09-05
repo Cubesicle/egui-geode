@@ -1,5 +1,5 @@
 #include "egui-geode.hpp"
-#include "egui-geode-rust.h"
+#include "egui-geode-ffi.h"
 
 namespace egui_geode {
     void context(void (*reader)(const void *ctx)) {

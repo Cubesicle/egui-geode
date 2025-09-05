@@ -13,12 +13,12 @@ FetchContent_MakeAvailable(Corrosion)
 
 corrosion_import_crate(
     MANIFEST_PATH Cargo.toml
-    CRATES egui-geode-rust
+    CRATES egui-geode-ffi
 )
 
 corrosion_experimental_cbindgen(
-    TARGET egui_geode_rust
-    HEADER_NAME egui-geode-rust.h
+    TARGET egui_geode_ffi
+    HEADER_NAME egui-geode-ffi.h
 )
 
 add_library(${PROJECT_NAME} INTERFACE)
@@ -30,7 +30,7 @@ target_sources(${PROJECT_NAME} INTERFACE ${SOURCE_FILES})
 
 target_include_directories(${PROJECT_NAME} INTERFACE include)
 
-target_link_libraries(${PROJECT_NAME} INTERFACE egui_geode_rust)
+target_link_libraries(${PROJECT_NAME} INTERFACE egui_geode_ffi)
 if (ANDROID)
     target_link_libraries(${PROJECT_NAME} INTERFACE EGL)
 endif()
