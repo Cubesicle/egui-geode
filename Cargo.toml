@@ -15,6 +15,6 @@ parking_lot = "0.12"
 [build-dependencies]
 bindgen = "0.70"
 
-[workspace]
-members = ["example/rust-ffi"]
-resolver = "2"
+# [workspace]
+# members = ["example/rust-ffi"]
+# resolver = "2"
